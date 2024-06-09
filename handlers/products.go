@@ -20,7 +20,7 @@ func (p *Products) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		product := data.ProductsType{}
 		err := product.FromJson(r.Body)
 		if err != nil {
-			fmt.Println(err)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 		}
 		data.AddToProdList(product)
 		fmt.Printf("%s\n", product)
@@ -30,26 +30,38 @@ func (p *Products) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		g := reg.FindAllString(r.URL.Path, -1)
 
 		if len(g) != 1 {
-			fmt.Println("Error")
-			return
+			http.Error(w, "Error handling url", http.StatusBadRequest)
 		}
 		if len(g[0]) != 2 {
-			fmt.Println("Error")
-			return
+			http.Error(w, "Error handling url", http.StatusBadRequest)
 		}
 		product := data.ProductsType{}
 		err := product.FromJson(r.Body)
 		if err != nil {
-			fmt.Println(err)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 		}
 		stringId := g[0][1]
 		productList := data.GetProdList()
 		id, err := strconv.Atoi(string(stringId))
 		if err != nil {
-			fmt.Println("Error")
+			http.Error(w, err.Error(), http.StatusBadRequest)
 		}
 		productList[id-1] = product[0]
 		fmt.Println("ID: ", id)
 		fmt.Printf("Products: %s", productList)
+	}
+	if r.Method == http.MethodDelete {
+		fmt.Println("DELETE HANDLE")
+		reg := regexp.MustCompile("/[0-9]+")
+		g := reg.FindAllString(r.URL.Path, -1)
+		if len(g) != 1 {
+			http.Error(w, "Error handling url", http.StatusBadRequest)
+		}
+		stringid := g[0][1]
+		intId, err := strconv.Atoi(string(stringid))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+		}
+		data.DeleteFromProdList(intId - 1)
 	}
 }

@@ -26,6 +26,14 @@ func AddToProdList(a ProductsType) ProductsType {
 	return prodList
 }
 
+func DeleteFromProdList(id int) {
+	for i := range prodList {
+		if i == id {
+			prodList = append(prodList[:i], prodList[i+1:]...)
+		}
+	}
+}
+
 func (a *ProductsType) ToJson(f io.Writer) {
 	ec := json.NewEncoder(f)
 	ec.Encode(a)

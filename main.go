@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"handlemod/handlers"
 	"net/http"
 )
@@ -14,4 +15,5 @@ func main() {
 		Handler: sm,
 	}
 	server.ListenAndServe()
+	fmt.Println("server start success")
 }
